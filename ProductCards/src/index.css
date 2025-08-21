@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css?family=Ruluko:700|Ruluko:400");
+@import "tailwindcss";
+
+@theme {
+  --color-text: #e2e9f2;
+  --color-background: #060b12;
+  --color-primary: #87abe0;
+  --color-secondary: #466592;
+  --color-accent: #327be9;
+  --color-g: #7c3aed00;
+  --font-ruluko: "Ruluko", cursive;
+  --animate-shine: shine 3s infinite;
+}
+body {
+  font-family: var(--font-ruluko);
+  @apply bg-background text-text;
+}
+
+@keyframes shine {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 2000px 0;
+  }
+}
