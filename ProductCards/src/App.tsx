@@ -4,10 +4,12 @@ import { ALL_TAGS, clothingCards, Sorts, type Sort } from "./data";
 import { sortAndFilterCards } from "./utils";
 import useDebouncedValue from "./hooks/useDebouncedValue";
 import TagChip from "./components/TagChip";
+import ViewToggle from "./components/ViewToggle";
 
 function App() {
   const [sort, setSort] = useState<Sort>(Sorts[0]);
   const [search, setSearch] = useState<string>("");
+  const [view, setView] = useState<"grid" | "list">("list");
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -15,6 +17,7 @@ function App() {
     const query = params.get("q");
     const sort = params.get("sort");
     const selectedTags = params.get("tags");
+    const view = params.get("view");
     if (query) setSearch(query);
     if (sort) {
       const sortOption = Sorts.find((s) => s.value === sort);
@@ -24,10 +27,15 @@ function App() {
       if (selectedTags)
         setSelectedTags(new Set(selectedTags.split(",").filter(Boolean)));
     }
+    if (view) {
+      const viewOption = view === "grid" ? "grid" : "list";
+      setView(viewOption);
+    }
   }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
+    if (view) params.set("view", view);
     if (search.trim()) params.set("q", search.trim());
     if (sort.value !== "relevant") params.set("sort", sort.value);
     if (selectedTags.size > 0)
@@ -36,7 +44,7 @@ function App() {
     const q = params.toString();
     const next = q ? `?${q}` : window.location.pathname;
     window.history.replaceState(null, "", next);
-  }, [search, sort, selectedTags]);
+  }, [search, sort, selectedTags, view]);
   const debouncedSearch = useDebouncedValue(search, 300);
 
   const filteredProducts = useMemo(
@@ -112,12 +120,15 @@ function App() {
           </select>
         </div>
       </div>
-      <div className="my-4">
-        <TagChip
-          tags={ALL_TAGS}
-          onToggle={onToggleTag}
-          selected={selectedTags}
-        />
+      <div className="flex  gap-6">
+        <div className="my-4">
+          <TagChip
+            tags={ALL_TAGS}
+            onToggle={onToggleTag}
+            selected={selectedTags}
+          />
+        </div>
+        <ViewToggle value={view} onChange={setView} />
       </div>
       <p className="w-full text-sm font-bold">
         Found {filteredProducts.length}{" "}
@@ -149,10 +160,26 @@ function App() {
             Clear Filters
           </button>
         </div>
-      ) : (
+      ) : view === "grid" ? (
         <ul className="flex flex-wrap gap-8 w-full justify-center items-center">
           {filteredProducts.map((card) => (
-            <ProductCard key={card.id} card={card} onTagClick={onToggleTag} />
+            <ProductCard
+              key={card.id}
+              card={card}
+              onTagClick={onToggleTag}
+              view={"grid"}
+            />
+          ))}
+        </ul>
+      ) : (
+        <ul className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full justify-center items-center">
+          {filteredProducts.map((card) => (
+            <ProductCard
+              key={card.id}
+              card={card}
+              onTagClick={onToggleTag}
+              view={"list"}
+            />
           ))}
         </ul>
       )}
