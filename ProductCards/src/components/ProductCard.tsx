@@ -1,11 +1,20 @@
 import type { clothingCard } from "../data";
 
-const ProductCard = ({ card }: { card: clothingCard }) => {
+const ProductCard = ({
+  card,
+  onTagClick,
+}: {
+  card: clothingCard;
+  onTagClick: (tag: string) => void;
+}) => {
   return (
     <li key={card.id} className="card group">
       <div className="card-shine group-hover:opacity-100"></div>
       <div className="p-3 h-full flex flex-col gap-0.5 relative z-2">
-        <div className="card-tag group-hover:scale-100 group-hover:opacity-100 group-hover:z-1">
+        <div
+          className="card-tag group-hover:scale-100 group-hover:opacity-100 group-hover:z-1 hover:brightness-150 hover:scale-105"
+          onClick={() => onTagClick(card.tag)}
+        >
           {card.tag}
         </div>
         <div className="card-image group-hover:translate-y-[-2px] group-hover:scale-[1.03] ">

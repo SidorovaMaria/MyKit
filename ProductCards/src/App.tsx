@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import ProductCard from "./components/ProductCard";
-import { clothingCards, Sorts, type Sort } from "./data";
+import { ALL_TAGS, clothingCards, Sorts, type Sort } from "./data";
 import { sortAndFilterCards } from "./utils";
 import useDebouncedValue from "./hooks/useDebouncedValue";
+import TagChip from "./components/TagChip";
 
 function App() {
   const [sort, setSort] = useState<Sort>(Sorts[0]);
@@ -48,6 +49,22 @@ function App() {
       }),
     [debouncedSearch, sort, selectedTags]
   );
+  const onToggleTag = (tag: string) => {
+    setSelectedTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(tag)) {
+        next.delete(tag);
+      } else {
+        next.add(tag);
+      }
+      return next;
+    });
+  };
+  const clearFilters = () => {
+    setSearch("");
+    setSort(Sorts[0]);
+    setSelectedTags(new Set());
+  };
 
   return (
     <main className="container mx-auto p-8">
@@ -95,12 +112,50 @@ function App() {
           </select>
         </div>
       </div>
-
-      <ul className="flex flex-wrap gap-8 w-full justify-center items-center">
-        {filteredProducts.map((card) => (
-          <ProductCard key={card.id} card={card} />
-        ))}
-      </ul>
+      <div className="my-4">
+        <TagChip
+          tags={ALL_TAGS}
+          onToggle={onToggleTag}
+          selected={selectedTags}
+        />
+      </div>
+      <p className="w-full text-sm font-bold">
+        Found {filteredProducts.length}{" "}
+        {filteredProducts.length === 1 ? "product" : "products"}
+        {selectedTags.size > 0 && (
+          <>
+            {" "}
+            with tags:{" "}
+            <span className="font-bold text-primary ">
+              {Array.from(selectedTags).join(", ")}
+            </span>
+          </>
+        )}
+        {debouncedSearch && (
+          <>
+            {" "}
+            matching:{" "}
+            <span className="font-bold text-primary">{debouncedSearch}</span>
+          </>
+        )}
+      </p>
+      {filteredProducts.length === 0 ? (
+        <div className="flex w-full items-center mt-8 justify-center flex-col gap-4">
+          <h3 className="text-xl">No Products were found</h3>
+          <button
+            className="bg-secondary rounded-xl outline-none hover:bg-red-500/50  px-4 py-1 cursor-pointer"
+            onClick={clearFilters}
+          >
+            Clear Filters
+          </button>
+        </div>
+      ) : (
+        <ul className="flex flex-wrap gap-8 w-full justify-center items-center">
+          {filteredProducts.map((card) => (
+            <ProductCard key={card.id} card={card} onTagClick={onToggleTag} />
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
