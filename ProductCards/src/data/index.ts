@@ -116,3 +116,16 @@ export const clothingCards: clothingCard[] = [
     tag: "seasonal",
   },
 ];
+
+export const Sorts = [
+  { value: "relevant", label: "Relevant" },
+  { value: "priceLowToHigh", label: "Price: Low to High" },
+  { value: "priceHighToLow", label: "Price: High to Low" },
+  { value: "Name(A-Z)", label: "A-Z" },
+  { value: "Name(Z-A)", label: "Z-A" },
+] as const;
+export type Sort = (typeof Sorts)[number];
+export type SortValue = (typeof Sorts)[number]["value"];
+
+export const ALL_TAGS = [...new Set(clothingCards.map((card) => card.tag))];
+export type AllTags = (typeof ALL_TAGS)[number];

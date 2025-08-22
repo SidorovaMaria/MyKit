@@ -9,18 +9,30 @@
   --color-accent: #327be9;
   --color-g: #7c3aed00;
   --font-ruluko: "Ruluko", cursive;
-  --animate-shine: shine 3s infinite;
 }
 body {
   font-family: var(--font-ruluko);
   @apply bg-background text-text;
 }
-
-@keyframes shine {
-  0% {
-    background-position: -1000px 0;
+@utility trans-300-ease {
+  @apply transition-all duration-300 ease-in;
+}
+@layer components {
+  /* Product Card */
+  .card {
+    @apply cursor-pointer w-[250px] h-[280px] bg-background rounded-[20px] relative overflow-hidden transition-all duration-500 shadow-[0_10px_15px_-3px] shadow-white/10 border border-transparent  hover:translate-y-[10px]
+      hover:shadow-[0_20px_25px_-5px] hover:shadow-white/20 hover:border-white/50;
   }
-  100% {
-    background-position: 2000px 0;
+  .card-shine {
+    @apply absolute inset-[-10px] bg-radial from-[#6b728741] to-[#d8ddee00] opacity-0 transition-opacity duration-300 ease-in;
+  }
+  .card-tag {
+    @apply absolute top-[12px] right-[12px] bg-secondary text-white px-2 py-1 rounded-xl font-medium scale-80 opacity-0 transition-all duration-300 ease-in;
+  }
+  .card-image {
+    @apply w-full h-full bg-gradient-to-br from-white to-white rounded-[12px] transition-all duration-500 relative overflow-hidden;
+  }
+  .card-title {
+    @apply text-base m-0 font-bold trans-300-ease;
   }
 }
